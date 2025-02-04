@@ -77,7 +77,7 @@ void free_path_components(path_components *path) {
 	free(path->extension);
 }
 
-void dxt1_to_rgba(const uint8_t* dxt1_block, uint8_t* rgba_pixels) {
+void dxt1_to_rgba(const uint8_t *dxt1_block, uint8_t *rgba_pixels) {
 	uint16_t color0 = (dxt1_block[0] | (dxt1_block[1] << 8));
 	uint16_t color1 = (dxt1_block[2] | (dxt1_block[3] << 8));
 	uint32_t color_bits = (dxt1_block[4] | (dxt1_block[5] << 8) | (dxt1_block[6] << 16) | (dxt1_block[7] << 24));
@@ -127,7 +127,7 @@ void dxt1_to_rgba(const uint8_t* dxt1_block, uint8_t* rgba_pixels) {
 	}
 }
 
-void dxt3_to_rgba(const uint8_t* dxt3_block, uint8_t* rgba_pixels) {
+void dxt3_to_rgba(const uint8_t *dxt3_block, uint8_t *rgba_pixels) {
 	// First 8 bytes contain the alpha values (4 bits per pixel).
 	uint64_t alpha_bits;
 	memcpy(&alpha_bits, dxt3_block, 8);
@@ -142,7 +142,7 @@ void dxt3_to_rgba(const uint8_t* dxt3_block, uint8_t* rgba_pixels) {
 	}
 }
 
-void dxt5_to_rgba(const uint8_t* dxt5_block, uint8_t* rgba_pixels) {
+void dxt5_to_rgba(const uint8_t *dxt5_block, uint8_t *rgba_pixels) {
 	// First 8 bytes contain the interpolated alpha values.
 	uint8_t alpha0 = dxt5_block[0];
 	uint8_t alpha1 = dxt5_block[1];
@@ -196,7 +196,7 @@ void dxt5_to_rgba(const uint8_t* dxt5_block, uint8_t* rgba_pixels) {
 	}
 }
 
-void decode_dxt_image(const uint8_t* image_data, uint32_t width, uint32_t height, int dxt_type, path_components *path, bool verbose) {
+void decode_dxt_image(const uint8_t *image_data, uint32_t width, uint32_t height, int dxt_type, path_components *path, bool verbose) {
 	uint32_t blocks_wide = (width + 3) / 4;
 	uint32_t blocks_high = (height + 3) / 4;
 	uint32_t total_pixels = width * height;
@@ -212,7 +212,7 @@ void decode_dxt_image(const uint8_t* image_data, uint32_t width, uint32_t height
 	for (uint32_t by = 0; by < blocks_high; by++) {
 		for (uint32_t bx = 0; bx < blocks_wide; bx++) {
 			uint8_t block_rgba[64];
-			const uint8_t* dxt_block = image_data + (by * blocks_wide + bx) * block_size;
+			const uint8_t *dxt_block = image_data + (by * blocks_wide + bx) * block_size;
 
 			switch (dxt_type) {
 				case 1:
