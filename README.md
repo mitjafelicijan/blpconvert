@@ -36,11 +36,12 @@ Program supports exporting to the following formats:
 - JPG
 - TGA
 
-By default it will use PNG but you can see use `-f` flag.
-
 ```sh
 ./blpconvert -f bmp samples/Ability_Ambush.blp
 ```
+
+> [!NOTE]
+> By default it will use PNG but you can see use `-f` flag.
 
 ## Verbose output
 
