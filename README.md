@@ -79,6 +79,7 @@ First few pixels of decoded image (RGBA format):
 
 - https://wowwiki-archive.fandom.com/wiki/BLP_file
 - https://en.wikipedia.org/wiki/S3_Texture_Compression
+- https://wowdev.wiki/BLP
 
 ## Special thanks
 
