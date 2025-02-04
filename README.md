@@ -54,6 +54,7 @@ Processing File:
   Folder: samples
   Filename: Ability_Ambush
   Extension: .blp
+  Format: png
 BLP File Details:
   Type: 1, BLP/DXTC/Uncompressed
   Compression: 2, DXTC

@@ -1,3 +1,6 @@
 .DS_Store
-*.png
 blpconvert
+samples/*.png
+samples/*.bmp
+samples/*.jpg
+samples/*.tga

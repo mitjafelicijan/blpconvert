@@ -54,12 +54,12 @@ image_format get_format_type(const char *format) {
 	if (strcasecmp(format, "png") == 0) return PNG;
 	if (strcasecmp(format, "bmp") == 0) return BMP;
 	if (strcasecmp(format, "tga") == 0) return TGA;
-	if (strcasecmp(format, "jpg") == 0 || strcasecmp(format, "jpeg") == 0) return JPG;
+	if (strcasecmp(format, "jpg") == 0) return JPG;
 	return PNG;
 }
 
 bool is_valid_format(const char *format) {
-	const char *valid_formats[] = {"png", "bmp", "tga", "jpg", "jpeg", NULL};
+	const char *valid_formats[] = {"png", "bmp", "tga", "jpg", NULL};
 	for (const char **f = valid_formats; *f != NULL; f++) {
 		if (strcasecmp(format, *f) == 0) {
 			return true;
@@ -304,7 +304,7 @@ void decode_dxt_image(const uint8_t *image_data, uint32_t width, uint32_t height
 			}
 			break;
 		case JPG:
-			if (verbose) printf("Processing as JPEG format\n");
+			if (verbose) printf("Processing as JPG format\n");
 			if (stbi_write_jpg(output_filename, width, height, 4, decoded_image, 100) == 0) {
 				printf("Failed to write %s file\n", output_filename);
 			} else {
@@ -425,7 +425,7 @@ void print_help(const char *program_name) {
 	printf("  -h, --help           Display this help message\n");
 	printf("  -v, --verbose        Enable verbose output\n");
 	printf("  -f, --format=FORMAT  Set output format (default: png)\n");
-	printf("                       Options: png, bmp, tga, jpg, jpeg\n");
+	printf("                       Options: png, bmp, tga, jpg\n");
 }
 
 int main(int argc, char *argv[]) {
@@ -455,7 +455,7 @@ int main(int argc, char *argv[]) {
 				break;
 			case 'f':
 				if (!is_valid_format(optarg)) {
-					fprintf(stderr, "Error: Invalid format '%s'. Valid formats are: png, bmp, tga, jpg, jpeg\n", optarg);
+					fprintf(stderr, "Error: Invalid format '%s'. Valid formats are: png, bmp, tga, jpg\n", optarg);
 					return 1;
 				}
 				format = optarg;
