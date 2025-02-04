@@ -6,9 +6,10 @@ World of Warcraft into PNG files.
 It works with DXT1, DXT3 and DXT5 compressions so it should convert anything
 from WoW.
 
-It should work on all operating systems. There is no funky code in this
-repository or or any dependencies you need to have installed on your machine. C
-compiler and Libc is all you need.
+> [!NOTE]
+> It should work on all operating systems. There is no funky code in this
+> repository or or any dependencies you need to have installed on your machine.
+> C compiler and Libc is all you need.
 
 ## Compile & Use
 
