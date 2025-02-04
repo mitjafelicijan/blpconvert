@@ -1,2 +1,2 @@
-blpconvert: blpconvert.c
-	clang -o blpconvert blpconvert.c
+blpconvert: main.c
+	cc -o blpconvert main.c
