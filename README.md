@@ -40,7 +40,7 @@ Program supports exporting to the following formats:
 ./blpconvert -f bmp samples/Ability_Ambush.blp
 ```
 
-> [!NOTE]
+> [!IMPORTANT]
 > By default it will use PNG but you can see use `-f` flag.
 
 ## Verbose output
