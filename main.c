@@ -348,15 +348,12 @@ void convert_blp_file(path_components *path, bool verbose) {
 			case 0: // DXT1
 				decode_dxt_image(image_data, header.width, header.height, 1, path, verbose);
 				break;
-
 			case 1: // DXT3
 				decode_dxt_image(image_data, header.width, header.height, 3, path, verbose);
 				break;
-
 			case 7: // DXT5
 				decode_dxt_image(image_data, header.width, header.height, 5, path, verbose);
 				break;
-
 			default:
 				printf("Unsupported alpha type: %d\n", header.alpha_type);
 				break;
