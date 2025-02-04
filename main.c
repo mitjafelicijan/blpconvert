@@ -32,15 +32,15 @@ typedef struct {
 } path_components;
 
 const char *type_labels[] = {
-	"JPG",                  // Index 0
-	"BLP/DXTC/Uncompressed" // Index 1
+	"JPG",                         // Index 0
+	"BLP/DXTC/Uncompressed"        // Index 1
 };
 
 const char *compression_labels[] = {
-	"Invalid",      // Index 0 (Unused)
-	"BLP",          // Index 1
-	"DXTC",         // Index 2
-	"Uncompressed"  // Index 3
+	"Invalid",                     // Index 0 (Unused)
+	"BLP",                         // Index 1
+	"DXTC",                        // Index 2
+	"Uncompressed"                 // Index 3
 };
 
 path_components extract_path_components(const char *filepath) {
