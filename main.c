@@ -43,6 +43,31 @@ const char *compression_labels[] = {
 	"Uncompressed"                 // Index 3
 };
 
+typedef enum {
+	PNG,
+	BMP,
+	TGA,
+	JPG,
+} image_format;
+
+image_format get_format_type(const char *format) {
+	if (strcasecmp(format, "png") == 0) return PNG;
+	if (strcasecmp(format, "bmp") == 0) return BMP;
+	if (strcasecmp(format, "tga") == 0) return TGA;
+	if (strcasecmp(format, "jpg") == 0 || strcasecmp(format, "jpeg") == 0) return JPG;
+	return PNG;
+}
+
+bool is_valid_format(const char *format) {
+	const char *valid_formats[] = {"png", "bmp", "tga", "jpg", "jpeg", NULL};
+	for (const char **f = valid_formats; *f != NULL; f++) {
+		if (strcasecmp(format, *f) == 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
 path_components extract_path_components(const char *filepath) {
 	path_components result;
 	result.fullname = filepath;
@@ -196,7 +221,7 @@ void dxt5_to_rgba(const uint8_t *dxt5_block, uint8_t *rgba_pixels) {
 	}
 }
 
-void decode_dxt_image(const uint8_t *image_data, uint32_t width, uint32_t height, int dxt_type, path_components *path, bool verbose) {
+void decode_dxt_image(const uint8_t *image_data, uint32_t width, uint32_t height, int dxt_type, path_components *path, bool verbose, char *format) {
 	uint32_t blocks_wide = (width + 3) / 4;
 	uint32_t blocks_high = (height + 3) / 4;
 	uint32_t total_pixels = width * height;
@@ -246,16 +271,46 @@ void decode_dxt_image(const uint8_t *image_data, uint32_t width, uint32_t height
 	}
 
 	if (verbose) {
-		printf("Saving decoded image as PNG...\n");
+		printf("Saving decoded image...\n");
 	}
 
 	char output_filename[512];
-	snprintf(output_filename, sizeof(output_filename), "%s/%s.png", path->folder, path->filename);
+	snprintf(output_filename, sizeof(output_filename), "%s/%s.%s", path->folder, path->filename, format);
 
-	if (stbi_write_png(output_filename, width, height, 4, decoded_image, width * 4) == 0) {
-		printf("Failed to write PNG file\n");
-	} else {
-		printf("Successfully saved %s\n", output_filename);
+	image_format fmt = get_format_type(format);
+	switch (fmt) {
+		case PNG:
+			if (verbose) printf("Processing as PNG format\n");
+			if (stbi_write_png(output_filename, width, height, 4, decoded_image, width * 4) == 0) {
+				printf("Failed to write %s file\n", output_filename);
+			} else {
+				printf("Successfully saved %s\n", output_filename);
+			}
+			break;
+		case BMP:
+			if (verbose) printf("Processing as BMP format\n");
+			if (stbi_write_bmp(output_filename, width, height, 4, decoded_image) == 0) {
+				printf("Failed to write %s file\n", output_filename);
+			} else {
+				printf("Successfully saved %s\n", output_filename);
+			}
+			break;
+		case TGA:
+			if (verbose) printf("Processing as TGA format\n");
+			if (stbi_write_tga(output_filename, width, height, 4, decoded_image) == 0) {
+				printf("Failed to write %s file\n", output_filename);
+			} else {
+				printf("Successfully saved %s\n", output_filename);
+			}
+			break;
+		case JPG:
+			if (verbose) printf("Processing as JPEG format\n");
+			if (stbi_write_jpg(output_filename, width, height, 4, decoded_image, 100) == 0) {
+				printf("Failed to write %s file\n", output_filename);
+			} else {
+				printf("Successfully saved %s\n", output_filename);
+			}
+			break;
 	}
 
 	// Print first few pixels for verification.
@@ -277,7 +332,7 @@ void decode_dxt_image(const uint8_t *image_data, uint32_t width, uint32_t height
 	free(decoded_image);
 }
 
-void convert_blp_file(path_components *path, bool verbose) {
+void convert_blp_file(path_components *path, bool verbose, char *format) {
 	FILE *file = fopen(path->fullname, "rb");
 	if (!file) {
 		perror("Error opening file");
@@ -346,13 +401,13 @@ void convert_blp_file(path_components *path, bool verbose) {
 
 		switch (header.alpha_type) {
 			case 0: // DXT1
-				decode_dxt_image(image_data, header.width, header.height, 1, path, verbose);
+				decode_dxt_image(image_data, header.width, header.height, 1, path, verbose, format);
 				break;
 			case 1: // DXT3
-				decode_dxt_image(image_data, header.width, header.height, 3, path, verbose);
+				decode_dxt_image(image_data, header.width, header.height, 3, path, verbose, format);
 				break;
 			case 7: // DXT5
-				decode_dxt_image(image_data, header.width, header.height, 5, path, verbose);
+				decode_dxt_image(image_data, header.width, header.height, 5, path, verbose, format);
 				break;
 			default:
 				printf("Unsupported alpha type: %d\n", header.alpha_type);
@@ -367,16 +422,19 @@ void convert_blp_file(path_components *path, bool verbose) {
 void print_help(const char *program_name) {
 	printf("Usage: %s [OPTIONS] file1 [file2 ...]\n\n", program_name);
 	printf("Options:\n");
-	printf("  -h, --help     Display this help message\n");
-	printf("  -v, --verbose  Enable verbose output\n");
+	printf("  -h, --help           Display this help message\n");
+	printf("  -v, --verbose        Enable verbose output\n");
+	printf("  -f, --format=FORMAT  Set output format (default: png)\n");
+	printf("                       Options: png, bmp, tga, jpg, jpeg\n");
 }
-
 
 int main(int argc, char *argv[]) {
 	bool verbose = false;
+	char *format = "png";
 	int c;
 
 	static struct option long_options[] = {
+		{"format",  required_argument, 0, 'f'},
 		{"help",    no_argument, 0, 'h'},
 		{"verbose", no_argument, 0, 'v'},
 		{0, 0, 0, 0}
@@ -385,7 +443,7 @@ int main(int argc, char *argv[]) {
 	// Parse command line options
 	while (1) {
 		int option_index = 0;
-		c = getopt_long(argc, argv, "hv", long_options, &option_index);
+		c = getopt_long(argc, argv, "f:hv", long_options, &option_index);
 		if (c == -1) { break; }
 
 		switch (c) {
@@ -394,6 +452,13 @@ int main(int argc, char *argv[]) {
 				return 0;
 			case 'v':
 				verbose = true;
+				break;
+			case 'f':
+				if (!is_valid_format(optarg)) {
+					fprintf(stderr, "Error: Invalid format '%s'. Valid formats are: png, bmp, tga, jpg, jpeg\n", optarg);
+					return 1;
+				}
+				format = optarg;
 				break;
 			case '?':
 				return 1;
@@ -409,7 +474,6 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-
 	// Loop though all provided files.
 	while (optind < argc) {
 		path_components path = extract_path_components(argv[optind++]);
@@ -420,9 +484,10 @@ int main(int argc, char *argv[]) {
 			printf("  Folder: %s\n", path.folder);
 			printf("  Filename: %s\n", path.filename);
 			printf("  Extension: %s\n", path.extension);
+			printf("  Format: %s\n", format);
 		}
 
-		convert_blp_file(&path, verbose);
+		convert_blp_file(&path, verbose, format);
 		free_path_components(&path);
 	}
 

@@ -1,4 +1,4 @@
-# Converts BLP to PNG
+# Converts BLP textures to images
 
 This tool converts images in BLP texture file format used in many games such as
 World of Warcraft into PNG files.
@@ -27,6 +27,19 @@ providing files to the tool.
 
 ```sh
 ./blpconvert samples/*.blp
+```
+
+Program supports exporting to the following formats:
+
+- PNG
+- BMP
+- JPG
+- TGA
+
+By default it will use PNG but you can see use `-f` flag.
+
+```sh
+./blpconvert -f bmp samples/Ability_Ambush.blp
 ```
 
 ## Verbose output
@@ -64,6 +77,10 @@ First few pixels of decoded image (RGBA format):
 
 - https://wowwiki-archive.fandom.com/wiki/BLP_file
 - https://en.wikipedia.org/wiki/S3_Texture_Compression
+
+## Special thanks
+
+- https://github.com/nothings/stb
 
 ## License
 
